@@ -4,7 +4,9 @@ const User = require("../models/User");
 const { body } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const decode = require("../middleware/decode");
 require("dotenv").config();
+
 // Route 1: Create a User using: POST "/api/auth/". No login required
 router.post(
   "/",
@@ -78,4 +80,20 @@ router.post("/login",
         });
     }
 );
+
+// Get User Information
+router.get("/getuser", decode , async (req,res) => {
+    try {
+        // console.log("getuser");
+        const user = req.user;
+        // console.log(user.id);
+        const userId = user.id;
+        const data = await User.findById(userId).select('-password ');
+        // console.log(data);
+        res.json({ message: "Login successful", status:true, user:data });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Internal Server Error");
+    }
+});
 module.exports = router;
