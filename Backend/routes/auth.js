@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const { body } = require("express-validator");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 // Route 1: Create a User using: POST "/api/auth/". No login required
 router.post(
   "/",
@@ -22,10 +25,11 @@ router.post(
           .status(400)
           .json({ error: "Sorry a user with this email already exists" });
       } else {
+        let pass = bcrypt.hashSync(password, 10);
         const newUser = new User({
           name,
           email,
-          password,
+          password: pass,
         });
         newUser
           .save()
@@ -33,7 +37,7 @@ router.post(
             res.json({
               message: "User created successfully",
               status: true,
-              user:newUser,
+              user: newUser,
             });
           })
           .catch((err) => {
@@ -45,4 +49,33 @@ router.post(
   },
 );
 
+router.post("/login", 
+    [body("email", "Enter a valid email").isEmail(),
+     body("password","Password can not be empty").exists()  
+    ],
+    (req, res) => {
+        const { email, password } = req.body;
+        console.log(req.body);
+        User.findOne({ email: email }).then((user) => {
+            if (!user) {
+                return res.status(400).json({ error: "Please try to login with correct credentials" });
+            } else {
+                const passwordCompare = bcrypt.compareSync(password, user.password);
+                if (!passwordCompare) {
+                    return res.status(400).json({ error: "Please try to login with correct credentials" });
+                } else {
+                    // send JWT token here
+                    const data = {
+                        user: {
+                            id: user.id,
+                            email: user.email,
+                        }
+                    };
+                    const token = jwt.sign(data, process.env.JWT_SECRET);
+                    res.json({ message: "Login successful", status: true, token });
+                }
+            };
+        });
+    }
+);
 module.exports = router;
