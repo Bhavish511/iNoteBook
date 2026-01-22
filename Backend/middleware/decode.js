@@ -1,6 +1,6 @@
 // want to implement the JWT decode method
-const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const jwt = require("jsonwebtoken");
 const decode = (req, res, next) => {
     const token = req.header('auth-token');
     if(!token){
