@@ -69,6 +69,8 @@ const [note, setNote] = useState({ id:"", etitle: "", edescription: "", etag: ""
                     name="etitle"
                     value={note.etitle}
                     aria-describedby="emailHelp"
+                    required="true"
+                    minLength={5}
                     onChange={onchange}
                   />
                 </div>
@@ -82,6 +84,8 @@ const [note, setNote] = useState({ id:"", etitle: "", edescription: "", etag: ""
                     id="edescription"
                     value={note.edescription}
                     name="edescription"
+                    required="true"
+                    minLength={5}
                     onChange={onchange}
                   />
                 </div>
@@ -109,7 +113,7 @@ const [note, setNote] = useState({ id:"", etitle: "", edescription: "", etag: ""
               >
                 Close
               </button>
-              <button type="button" className="btn btn-primary" onClick={()=>{handleclick()}}>
+              <button disabled={note.edescription.length<5 || note.etitle.length<5} type="button" className="btn btn-primary" onClick={()=>{handleclick()}}>
                 Update Note
               </button>
             </div>
@@ -118,6 +122,9 @@ const [note, setNote] = useState({ id:"", etitle: "", edescription: "", etag: ""
       </div>
       <div className="row my-3">
         <h1>Your Notes</h1>
+        <div className="container mx-2">
+            {notes.length === 0 && "No Notes To Display."}
+        </div>
         {notes.map((note) => {
           return (
             <Noteitem key={note._id} updateNote={updateNote} note={note} />

@@ -3,6 +3,7 @@ const router = express.Router();
 const decode = require("../middleware/decode");
 const Notes = require("../models/Notes");
 const { body } = require("express-validator");
+const mongoose = require("mongoose");
 // Route 1: Create a User using: POST "/api/auth/". No login required
 router.post("/addnote", decode,[
     body('title','Enter a valid title').isLength({min:3}),
@@ -80,28 +81,38 @@ async (req, res)=>{
 }
 });
 
-router.delete("/deletenote/:id",decode, async(req, res)=>{
-    try {
-        const id = req.params.id;
-        const note = await Notes.findById(id);
-        if(note){
-            if(note.user.toString() !== req.user.id){
-                return res.status(401).send("Not Allowed");
-            }else{
-                await Notes.findByIdAndDelete(id);
-                res.json({
-                    message: "Notes deleted Successfully",
-                    success: true,
-                    data:note,
-                });
-            }
-        }
-        else {
-            res.status(404).send("Note not found");
-        }
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).send("Internal Server Error");
+router.delete("/deletenote/:id", decode, async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    // ✅ Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid note ID" });
     }
+
+    const note = await Notes.findById(id);
+
+    if (!note) {
+      return res.status(404).json({ error: "Note not found" });
+    }
+
+    // ✅ Ownership check
+    if (note.user.toString() !== req.user.id) {
+      return res.status(401).json({ error: "Not Allowed" });
+    }
+
+    await Notes.findByIdAndDelete(id);
+
+    res.json({
+      success: true,
+      message: "Note deleted successfully",
+      data: note,
+    });
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
 });
+
 module.exports = router;
