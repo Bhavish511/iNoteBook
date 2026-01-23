@@ -4,12 +4,15 @@ const path = require('path');
 require('dotenv').config({
   path: path.join(__dirname, '.env')
 });
+const cors = require("cors");
+
 const connectToMongo = require('./db');
 connectToMongo();
 const express = require('express');
 const app = express();
 const port = 5000;
 
+app.use(cors());
 app.use(express.json());
 
 
