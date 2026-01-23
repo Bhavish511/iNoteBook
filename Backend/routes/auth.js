@@ -9,7 +9,7 @@ require("dotenv").config();
 
 // Route 1: Create a User using: POST "/api/auth/". No login required
 router.post(
-  "/",
+  "/createuser",
   [
     body("name", "Enter a valid name").isLength({ min: 3 }),
     body("email", "Enter a valid email").isEmail(),

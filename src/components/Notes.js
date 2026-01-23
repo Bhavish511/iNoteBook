@@ -31,7 +31,7 @@ const [note, setNote] = useState({ id:"", etitle: "", edescription: "", etag: ""
       <Addnote />
       <button
         type="button"
-        class="btn btn-primary d-none"
+        className="btn btn-primary d-none"
         data-bs-toggle="modal"
         ref={ref}
         data-bs-target="#exampleModal"
