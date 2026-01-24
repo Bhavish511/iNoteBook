@@ -3,12 +3,12 @@
 import Notes from "./Notes";
 
 
-export default function Home() {
+export default function Home(props) {
   // const context = useContext(noteContext);
   // const {notes, setnotes} = context;
   return (
     <div>
-      <Notes />
+      <Notes showAlert={props.showAlert}/>
     </div>
   );
 }

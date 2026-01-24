@@ -20,10 +20,13 @@ export default function Login(props) {
     console.log(json);
     if(json.status){
         localStorage.setItem('token',json.token);
+        props.showAlert("Logged Successfully","success")
         navigate('/');
-    }
-    else{
-        alert("Invalid");
+      }
+      else{
+      props.showAlert("Invalid Details","danger")
+      navigate('/login');
+        
     }
   };
   const onchange = (e) => {
@@ -35,7 +38,8 @@ export default function Login(props) {
     }
   };
   return (
-    <div>
+    <div className="mt-3">
+      <h2 className="text-center">Login to Continue to iNoteBook</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="email" className="form-label">
@@ -52,9 +56,6 @@ export default function Login(props) {
             onChange={onchange}
 
           />
-          <div id="emailHelp" className="form-text">
-            We'll never share your email with anyone else.
-          </div>
         </div>
         <div className="mb-3">
           <label htmlFor="exampleInputPassword1" className="form-label">
@@ -75,7 +76,7 @@ export default function Login(props) {
           type="submit"
           className="btn btn-primary"
         >
-          Submit
+          Login
         </button>
       </form>
     </div>
